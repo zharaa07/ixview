@@ -1,0 +1,94 @@
+/* =========================================================================
+   tv-dockable.css — نظام مواضع حرة للأزرار
+   ========================================================================= */
+
+#tvDockBottom {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  z-index: 999;
+  flex-wrap: wrap;
+}
+#tvDockBottom:empty { display: none; }
+
+#tvDockLeft {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  z-index: 999;
+  overflow-y: auto;
+  width: 0;
+}
+#tvDockLeft:not(:empty) {
+  width: 44px;
+  background: rgba(20, 14, 32, .55);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, .06);
+}
+
+#tvDockCustomizeBtn {
+  position: fixed;
+  bottom: 54px;
+  right: 10px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: #151d2f;
+  color: #d7dde8;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 3000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+#tvDockCustomizeBtn.active { background: #2962FF; color: #fff; }
+
+body.tv-dock-customizing #tvTopBar > *,
+body.tv-dock-customizing #tvDockBottom > *,
+body.tv-dock-customizing #tvDockLeft > * {
+  outline: 2px dashed rgba(41, 98, 255, .6);
+  outline-offset: 2px;
+  cursor: grab;
+}
+
+#tvDockZones {
+  position: fixed; inset: 0;
+  z-index: 2900;
+  pointer-events: none;
+}
+#tvDockZones.hidden { display: none; }
+
+.tv-dock-zone {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(41, 98, 255, .08);
+  border: 2px dashed rgba(41, 98, 255, .3);
+  pointer-events: auto;
+  color: rgba(255, 255, 255, .5);
+  font-size: 12px;
+  font-weight: 700;
+}
+.tv-dock-zone.hover { background: rgba(41, 98, 255, .3); border-color: #2962FF; color: #fff; }
+
+.tv-dock-zone-top { top: 0; left: 0; right: 0; height: 60px; }
+.tv-dock-zone-bottom { left: 0; right: 0; bottom: 40px; height: 60px; }
+.tv-dock-zone-left { top: 65px; left: 0; bottom: 105px; width: 60px; }
+
+.tv-dock-ghost {
+  position: fixed;
+  z-index: 3100;
+  opacity: .85;
+  pointer-events: none;
+  transform: scale(1.05);
+}
