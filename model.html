@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trading Journal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+
+:root {
+    
+    --bg: #180F24;
+    --card: #241737;
+    
+    --card-light: #2D1C46;
+    
+    --purple: #8B5CF6;
+    
+    --purple-light: #A78BFA;
+    
+    --border:
+        rgba(255, 255, 255, .08);
+    
+    --shadow:
+        0 20px 50px rgba(0, 0, 0, .35);
+    
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+background:
+radial-gradient(
+circle at top,
+#2B1A44 0%,
+#180F24 40%,
+#120B1D 100%
+);
+
+color:#fff;
+
+font-family:
+Inter,
+Segoe UI,
+sans-serif;
+
+min-height:100vh;
+
+overflow-x:hidden;
+
+}
+
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+}
+.add-trade-card{
+
+width:280px;
+
+height:150px;
+
+margin:40px auto;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+cursor:pointer;
+
+border-radius:20px;
+
+background:
+linear-gradient(
+135deg,
+#2D1C46,
+#180F24
+);
+
+border:1px solid
+rgba(255,255,255,.08);
+
+box-shadow:
+0 20px 60px
+rgba(139,92,246,.25);
+
+transition:.3s;
+
+}
+
+.add-trade-card:hover{
+
+transform:
+translateY(-8px)
+scale(1.02);
+
+}
+
+.add-trade-card h1{
+    font-size:48px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(160px, 1fr));
+    
+    gap: 20px;
+    
+    margin-bottom: 40px;
+}
+
+.stat-card{
+
+background:
+linear-gradient(
+145deg,
+rgba(255,255,255,.06),
+rgba(255,255,255,.03)
+);
+
+backdrop-filter:blur(20px);
+
+border:1px solid var(--border);
+
+border-radius:16px;
+
+padding:12px;
+
+box-shadow:var(--shadow);
+
+transition:.25s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.chart-card{
+
+background:
+linear-gradient(
+145deg,
+rgba(255,255,255,.05),
+rgba(255,255,255,.02)
+);
+
+border:1px solid var(--border);
+
+border-radius:24px;
+
+padding:25px;
+
+margin:35px 0;
+
+box-shadow:var(--shadow);
+
+}
+
+.stat-card:hover {
+    
+    transform:
+        translateY(-6px);
+    
+    border-color:
+        rgba(139, 92, 246, .5);
+    
+}
+
+.stat-card p {
+    margin-top: 6px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.stat-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: .8;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:rgba(255,255,255,.05);
+
+    border-radius:15px;
+
+    overflow:hidden;
+    margin-top: 20px;
+}
+
+
+th,
+td{
+
+    padding:15px;
+
+    text-align:center;
+
+    border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,.7);
+}
+
+.modal-content{
+
+width:90%;
+
+max-width:550px;
+
+margin:40px auto;
+
+padding:25px;
+
+border-radius:28px;
+
+background:
+linear-gradient(
+145deg,
+#241737,
+#1A1028
+);
+
+border:1px solid
+rgba(255,255,255,.08);
+
+box-shadow:
+0 30px 80px rgba(0,0,0,.5);
+
+max-height:90vh;
+
+overflow-y:auto;
+
+}
+.close-btn{
+
+    float:right;
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+}
+
+label{
+
+    display:block;
+
+    margin-top:15px;
+}
+
+input,
+select,
+textarea {
+    
+    width: 100%;
+    
+    padding: 14px;
+    
+    margin-top: 6px;
+    
+    border-radius: 14px;
+    
+    background:
+        rgba(255, 255, 255, .05);
+    
+    border:
+        1px solid rgba(255, 255, 255, .08);
+    
+    color: white;
+    
+    outline: none;
+    
+    transition: .25s;
+    
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+border-color:
+var(--purple);
+
+box-shadow:
+0 0 0 4px
+rgba(139,92,246,.15);
+
+}
+canvas{
+
+background:
+rgba(255,255,255,.03);
+
+border-radius:24px;
+
+padding:15px;
+
+border:1px solid
+rgba(255,255,255,.06);
+
+}
+
+button{
+
+background:
+linear-gradient(
+135deg,
+#8B5CF6,
+#6D5DF6
+);
+
+color:white;
+
+border:none;
+
+font-weight:600;
+
+transition:.25s;
+
+}
+
+button:hover{
+
+transform:
+translateY(-2px);
+
+filter:brightness(1.1);
+
+}
+
+.save-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+h2 {
+    margin-bottom: 20px;
+    margin-top: 35px;
+}
+
+.models-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(280px,1fr));
+
+gap:20px;
+
+margin-bottom:30px;
+
+}
+
+.model-card{
+
+background:
+linear-gradient(
+145deg,
+rgba(255,255,255,.05),
+rgba(255,255,255,.02)
+);
+
+border-radius:24px;
+
+padding:24px;
+
+border:1px solid var(--border);
+
+box-shadow:var(--shadow);
+
+transition:.3s;
+
+}
+.model-card:hover {
+    
+    transform:
+        translateY(-6px);
+    
+}
+
+.model-card h3{
+
+margin-bottom:15px;
+
+}
+
+.model-stat{
+
+margin-bottom:8px;
+
+}
+
+.model-buttons{
+
+display:flex;
+
+gap:10px;
+
+margin-top:15px;
+
+}
+
+.model-buttons button{
+
+flex:1;
+
+padding:10px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+}
+
+#calendarHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+#calendarHeader button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #241737;
+    color: white;
+}
+
+#monthTitle {
+    min-width: 180px;
+    text-align: center;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: #101827;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.calendar-day-name {
+    background: #0f172a;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.calendar-cell {
+    background: #1e293b;
+    min-height: 120px;
+    padding: 10px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.calendar-cell:hover {
+    
+    transform: translateY(-4px);
+    
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, .3);
+    
+    z-index: 10;
+    
+}
+.calendar-date {
+    font-size: 12px;
+    opacity: .7;
+    margin-bottom: 10px;
+}
+
+.calendar-profit {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.calendar-loss {
+    color: #f87171;
+    font-weight: bold;
+}
+
+.calendar-trades {
+    font-size: 12px;
+    margin-top: 5px;
+    opacity: .8;
+}
+
+.empty-cell {
+    background: transparent;
+}
+
+.month-total {
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+
+#tooltip {
+    
+    position: fixed;
+    
+    background: #0f172a;
+    
+    padding: 12px;
+    
+    border-radius: 10px;
+    
+    font-size: 12px;
+    
+    display: none;
+    
+    z-index: 9999;
+    
+    pointer-events: none;
+    
+    border: 1px solid rgba(255, 255, 255, .1);
+    
+}
+
+#sessionStats .stat-card {
+    
+    padding: 12px;
+    
+    border-radius: 14px;
+    
+}
+
+#sessionStats .stat-card h3 {
+    
+    font-size: 14px;
+    
+    margin-bottom: 8px;
+    
+}
+
+#sessionStats .stat-card p {
+    
+    font-size: 13px;
+    
+    margin-top: 4px;
+    
+    font-weight: 500;
+    
+}
+
+section,
+.stats,
+.chart-card,
+table,
+.models-grid {
+    margin-bottom: 35px;
+}
+
+.section-box {
+    margin: 50px 0;
+}
+
+.export-box {
+    margin: 30px 0 40px;
+}
+
+.export-box button {
+    padding: 14px 24px;
+    border-radius: 14px;
+}
+
+.export-dropdown {
+    
+    position: relative;
+    
+    display: inline-block;
+    
+    margin-bottom: 20px;
+    
+}
+
+.export-btn {
+    
+    padding: 12px 18px;
+    
+    border: none;
+    
+    border-radius: 14px;
+    
+    cursor: pointer;
+    
+    font-weight: 600;
+    
+}
+
+.export-menu {
+    
+    display: none;
+    
+    position: absolute;
+    
+    top: 55px;
+    
+    left: 0;
+    
+    width: 220px;
+    
+    background: #241737;
+    
+    border: 1px solid rgba(255, 255, 255, .08);
+    
+    border-radius: 18px;
+    
+    overflow: hidden;
+    
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+    
+    z-index: 999;
+    
+}
+
+.export-menu button {
+    
+    width: 100%;
+    
+    padding: 14px;
+    
+    text-align: left;
+    
+    background: none;
+    
+    border: none;
+    
+    color: white;
+    
+    cursor: pointer;
+    
+    transition: .25s;
+    
+}
+
+.export-menu button:hover {
+    
+    background: rgba(255, 255, 255, .06);
+    
+}
+
+.action-buttons {
+    
+    display: flex;
+    
+    justify-content: center;
+    
+    gap: 8px;
+    
+}
+
+.action-btn {
+    
+    width: 38px;
+    
+    height: 38px;
+    
+    border: none;
+    
+    border-radius: 12px;
+    
+    cursor: pointer;
+    
+    font-size: 16px;
+    
+    display: flex;
+    
+    align-items: center;
+    
+    justify-content: center;
+    
+    transition: .25s;
+    
+}
+
+.action-btn:hover {
+    
+    transform: translateY(-3px);
+    
+}
+
+.view-btn {
+    
+    background: #3b82f6;
+    
+}
+
+.edit-btn {
+    
+    background: #8B5CF6;
+    
+}
+
+.delete-btn {
+    
+    background: #ef4444;
+    
+}
+
+
+</style>
+
+</head>
+
+<body>
+ <script>
+
+
+const params = new URLSearchParams(window.location.search);
+
+const currentModel = params.get("name");
+
+
+let allTrades =
+    JSON.parse(
+        localStorage.getItem("trades")
+    ) || [];
+
+let trades =
+    allTrades.filter(
+        trade =>
+        trade.model === currentModel
+    );
+    
+let editIndex = -1;
+
+let chart;
+let sessionChart;
+let showAllTrades = false;
+
+
+</script> 
+
+<main>
+
+<div class="add-trade-card" onclick="toggleForm()">
+
+    <h1>+</h1>
+
+    <p>Add Trade</p>
+
+<h1 id="modelTitle"></h1>
+
+</div>
+
+
+
+<div class="stats">
+
+    <div class="stat-card">
+
+        <h3>Total Trades</h3>
+
+        <p id="totalTrades">0</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Win Rate</h3>
+
+        <p id="winRate">0%</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Total R</h3>
+
+        <p id="totalR">0</p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Average R</h3>
+
+        <p id="averageR">0</p>
+
+    </div>
+
+<div class="stat-card">
+    <h3>Best Trade</h3>
+    <p id="bestTrade">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Best Model</h3>
+    <p id="bestModel">-</p>
+</div>
+
+<div class="stat-card">
+    <h3>Top Mistake</h3>
+    <p id="topMistake">-</p>
+</div>
+
+<div class="stat-card">
+    <h3>Worst Trade</h3>
+    <p id="worstTrade">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Profit Factor</h3>
+    <p id="profitFactor">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Expectancy</h3>
+    <p id="expectancy">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Best Asset</h3>
+    <p id="bestAsset">-</p>
+</div>
+
+<div class="stat-card">
+    <h3>Total Wins</h3>
+    <p id="totalWins">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Total Losses</h3>
+    <p id="totalLosses">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Breakeven</h3>
+    <p id="totalBE">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Win/Loss Ratio</h3>
+    <p id="winLossRatio">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Win Streak</h3>
+    <p id="winStreak">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Loss Streak</h3>
+    <p id="lossStreak">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Max Drawdown</h3>
+    <p id="maxDrawdown">0</p>
+</div>
+
+<div class="stat-card">
+    <h3>Best Session</h3>
+    <p id="bestSession">-</p>
+</div>
+
+<div class="stat-card">
+    <h3>Worst Session</h3>
+    <p id="worstSession">-</p>
+</div>
+
+</div>
+
+<h2>Equity Curve</h2>
+
+<div class="chart-card">
+    <canvas id="equityChart"></canvas>
+</div>
+
+<h2>Session Analysis</h2>
+
+<div class="chart-card">
+    
+    <div style="
+    width:300px;
+    height:300px;
+    margin:auto;
+    ">
+        <canvas id="sessionChart"></canvas>
+    </div>
+    
+</div>
+
+<div
+id="sessionStats"
+style="
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-top:20px;
+"
+>
+</div>
+
+<h2>Recent Trades</h2>
+
+
+<select
+id="assetFilter"
+onchange="
+renderTrades();
+updateStats();
+drawChart();
+drawSessionChart();
+">
+
+<option value="All">All Assets</option>
+
+<option value="EURUSD">EURUSD</option>
+<option value="GBPUSD">GBPUSD</option>
+<option value="BTCUSD">BTCUSD</option>
+<option value="NAS100">NAS100</option>
+<option value="XAUUSD">XAUUSD</option>
+<option value="OIL">OIL</option>
+
+</select>
+
+<select
+id="modelFilter"
+onchange="
+renderTrades();
+updateStats();
+drawChart();
+drawSessionChart();
+">
+
+<option value="All">
+All Models
+</option>
+
+</select>
+
+<table id="tradesTable">
+
+<thead>
+
+<tr>
+
+<th>Asset</th>
+<th>Model</th>
+<th>Session</th>
+<th>Result</th>
+<th>R</th>
+<th>Edit</th>
+<th>Delete</th>
+<th>View</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+<button
+id="showMoreBtn"
+onclick="toggleTrades()"
+style="
+margin-top:15px;
+padding:10px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+Show More
+</button>
+
+</main>
+
+<div id="tradeModal" class="modal">
+
+<div class="modal-content">
+
+<button
+class="close-btn"
+onclick="toggleForm()">
+
+✕
+
+</button>
+
+<h2>Add Trade</h2>
+
+<form id="tradeForm">
+
+<label>Asset</label>
+
+<select id="asset">
+
+<option>EURUSD</option>
+<option>GBPUSD</option>
+<option>BTCUSD</option>
+<option>NAS100</option>
+<option>XAUUSD</option>
+<option>OIL</option>
+
+</select>
+
+<label>Model</label>
+
+<select id="model">
+
+</select>
+
+
+<label>Result</label>
+
+<select id="result">
+
+<option>Win</option>
+<option>Loss</option>
+<option>Breakeven</option>
+
+</select>
+
+<label>Session</label>
+
+<select id="session">
+    <option>Asia</option>
+    <option>London</option>
+    <option>New York AM</option>
+    <option>New York PM</option>
+</select>
+
+<label>Emotion</label>
+
+<select id="emotion">
+
+<option>Calm</option>
+
+<option>Confident</option>
+
+<option>Fearful</option>
+
+<option>Greedy</option>
+
+<option>Angry</option>
+
+<option>Revenge</option>
+
+<option>FOMO</option>
+
+</select>
+
+
+<label>Result (R)</label>
+
+<input
+type="number"
+id="resultR"
+step="0.1"
+required>
+
+<label>Date</label>
+<input
+type="datetime-local"
+id="date">
+
+<label>Entry Price</label>
+<input
+type="number"
+id="entryPrice"
+step="0.01">
+
+<label>Stop Loss</label>
+<input
+type="number"
+id="stopLoss"
+step="0.01">
+
+<label>Take Profit</label>
+<input
+type="number"
+id="takeProfit"
+step="0.01">
+
+<label>Risk %</label>
+<input
+type="number"
+id="risk"
+step="0.1">
+
+<label>Lot Size</label>
+<input
+type="number"
+id="lotSize"
+step="0.01">
+
+<label>Notes</label>
+
+<textarea
+id="notes"
+rows="5"
+></textarea>
+
+<label>Screenshot</label>
+
+<input
+type="file"
+id="screenshot"
+accept="image/*"
+>
+
+<label>Mistakes</label>
+
+<label>Mistakes</label>
+
+<button
+type="button"
+onclick="toggleMistakes()"
+>
+Select Mistakes
+</button>
+
+<div
+id="mistakes"
+style="
+display:none;
+margin-top:10px;
+"
+>
+
+</div>
+
+<input
+type="text"
+id="newMistake"
+placeholder="Add New Mistake"
+>
+
+<button
+type="button"
+onclick="addMistake()"
+>
+Add
+</button>
+
+<button
+class="save-btn"
+type="submit">
+
+Save Trade
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<div id="viewModal" class="modal">
+
+<div class="modal-content">
+
+<button
+class="close-btn"
+onclick="closeView()">
+
+✕
+
+</button>
+
+<h2>Trade Details</h2>
+
+<div id="tradeDetails">
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let mistakesList =
+JSON.parse(
+localStorage.getItem(
+"mistakesList"
+)
+) || [
+
+"Early Entry",
+"Late Entry",
+"Early Exit",
+"Late Exit",
+"FOMO Entry",
+"Over Trading",
+"Revenge Trading",
+"Moved Stop Loss"
+
+];
+
+let modelsList =
+JSON.parse(
+localStorage.getItem(
+"modelsList"
+)
+) || [
+
+"SSMT",
+"IFVG",
+"QT",
+"AMD",
+"CISD"
+
+];
+
+function toggleForm(){
+
+const modal =
+document.getElementById(
+"tradeModal"
+);
+
+if(
+modal.style.display ===
+"block"
+){
+
+modal.style.display =
+"none";
+
+}else{
+
+if(editIndex === -1){
+
+document.getElementById(
+"tradeForm"
+).reset();
+
+editIndex = -1;
+
+document
+.querySelectorAll(
+'#mistakes input'
+)
+.forEach(box => {
+box.checked = false;
+});
+
+}
+
+modal.style.display =
+"block";
+
+}
+
+}
+
+document
+.getElementById(
+"tradeForm"
+)
+.addEventListener(
+"submit",
+saveTrade
+);
+
+function saveTrade(event){
+
+event.preventDefault();
+
+const file =
+document.getElementById(
+"screenshot"
+).files[0];
+
+const trade = {
+
+asset:
+document.getElementById(
+"asset"
+).value,
+
+model: currentModel,
+
+result:
+document.getElementById(
+"result"
+).value,
+
+resultR:
+parseFloat(
+document.getElementById(
+"resultR"
+).value
+),
+
+date:
+document.getElementById(
+"date"
+).value,
+
+entryPrice:
+parseFloat(
+document.getElementById(
+"entryPrice"
+).value
+),
+
+stopLoss:
+parseFloat(
+document.getElementById(
+"stopLoss"
+).value
+),
+
+takeProfit:
+parseFloat(
+document.getElementById(
+"takeProfit"
+).value
+),
+
+risk:
+parseFloat(
+document.getElementById(
+"risk"
+).value
+),
+
+lotSize:
+parseFloat(
+document.getElementById(
+"lotSize"
+).value
+),
+
+emotion:
+document.getElementById(
+"emotion"
+).value,
+
+session:
+document.getElementById(
+"session"
+).value,
+
+notes:
+document.getElementById(
+"notes"
+).value,
+
+mistakes:
+Array.from(
+document.querySelectorAll(
+'#mistakes input:checked'
+)
+).map(
+item => item.value
+),
+
+screenshot: "",
+
+};
+
+const saveData = () => {
+    
+    if (editIndex !== -1) {
+        
+        const realIndex =
+            allTrades.indexOf(
+                trades[editIndex]
+            );
+        
+        allTrades[realIndex] = trade;
+        
+        editIndex = -1;
+        
+    } else {
+        
+        allTrades.push(trade);
+        
+    }
+    
+    localStorage.setItem(
+        "trades",
+        JSON.stringify(allTrades)
+    );
+    
+    trades =
+        allTrades.filter(
+            t => t.model === currentModel
+        );
+    
+    renderTrades();
+    updateStats();
+    drawChart();
+    
+    toggleForm();
+    
+    document
+        .getElementById(
+            "tradeForm"
+        )
+        .reset();
+    
+};
+
+if(file){
+
+const reader =
+new FileReader();
+
+reader.onload = function(e){
+
+const img =
+new Image();
+
+img.onload = function(){
+
+const canvas =
+document.createElement(
+"canvas"
+);
+
+const maxWidth = 800;
+
+let width =
+img.width;
+
+let height =
+img.height;
+
+if(
+width > maxWidth
+){
+
+height =
+height *
+(maxWidth / width);
+
+width =
+maxWidth;
+
+}
+
+canvas.width =
+width;
+
+canvas.height =
+height;
+
+const ctx =
+canvas.getContext(
+"2d"
+);
+
+ctx.drawImage(
+img,
+0,
+0,
+width,
+height
+);
+
+trade.screenshot =
+canvas.toDataURL(
+"image/jpeg",
+0.7
+);
+
+saveData();
+
+};
+
+img.src =
+e.target.result;
+
+};
+
+reader.readAsDataURL(
+file
+);
+
+}else{
+
+saveData();
+
+}
+
+}
+
+function toggleTrades(){
+
+showAllTrades = !showAllTrades;
+
+renderTrades();
+
+}
+
+function renderTrades(){
+
+const tbody =
+document.querySelector(
+"#tradesTable tbody"
+);
+
+tbody.innerHTML = "";
+
+const selectedAsset =
+document.getElementById(
+"assetFilter"
+).value;
+
+const selectedModel =
+document.getElementById(
+"modelFilter"
+).value;
+
+
+let visibleTrades =
+showAllTrades
+?
+trades
+:
+trades.slice(-3);
+
+visibleTrades = [...visibleTrades].reverse();
+
+visibleTrades.forEach(
+        (trade) => {
+            
+            const realIndex = trades.indexOf(trade);
+
+if(
+selectedAsset !== "All" &&
+trade.asset !== selectedAsset
+){
+return;
+}
+
+if(
+selectedModel !== "All" &&
+trade.model !== selectedModel
+){
+return;
+}
+
+tbody.innerHTML += `
+
+<tr>
+
+<td>${trade.asset}</td>
+
+<td>${trade.model}</td>
+
+<td>${trade.session}</td>
+
+<td>${trade.result}</td>
+
+<td>${trade.resultR}</td>
+
+<td>
+    <button onclick="editTrade(${realIndex})">
+        ✏️
+    </button>
+</td>
+
+<td>
+    <button onclick="deleteTrade(${realIndex})">
+        🗑️
+    </button>
+</td>
+
+<td>
+    <button onclick="viewTrade(${realIndex})">
+        👁️
+    </button>
+</td>
+
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"showMoreBtn"
+).textContent =
+showAllTrades
+?
+"Show Less"
+:
+"Show More";
+
+}
+
+function updateStats(){
+
+const selectedAsset =
+document.getElementById(
+"assetFilter"
+).value;
+
+const filteredTrades =
+selectedAsset === "All"
+?
+trades
+:
+trades.filter(
+trade =>
+trade.asset === selectedAsset
+);
+
+const totalTrades =
+filteredTrades.length;
+
+const wins =
+filteredTrades.filter(
+trade =>
+trade.result ===
+"Win"
+).length;
+
+const losses =
+filteredTrades.filter(
+trade =>
+trade.result ===
+"Loss"
+).length;
+
+const breakevens =
+filteredTrades.filter(
+trade =>
+trade.result ===
+"Breakeven"
+).length;
+
+const winLossRatio =
+losses
+?
+wins / losses
+:
+wins;
+
+const totalR =
+filteredTrades.reduce(
+(sum,trade)=>
+sum +
+trade.resultR,
+0
+);
+
+const averageR =
+totalTrades
+?
+totalR /
+totalTrades
+:
+0;
+
+const winRate =
+totalTrades
+?
+(wins /
+totalTrades)
+* 100
+:
+0;
+
+const bestTrade =
+totalTrades
+?
+Math.max(
+...filteredTrades.map(
+trade => trade.resultR
+)
+)
+:
+0;
+
+const worstTrade =
+totalTrades
+?
+Math.min(
+...filteredTrades.map(
+trade => trade.resultR
+)
+)
+:
+0;
+
+
+const grossProfit =
+filteredTrades
+.filter(
+trade => trade.resultR > 0
+)
+.reduce(
+(sum,trade)=>
+sum + trade.resultR,
+0
+);
+
+const grossLoss =
+Math.abs(
+
+filteredTrades
+.filter(
+trade => trade.resultR < 0
+)
+.reduce(
+(sum,trade)=>
+sum + trade.resultR,
+0
+)
+
+);
+
+const profitFactor =
+grossLoss
+?
+grossProfit /
+grossLoss
+:
+0;
+
+const expectancy =
+totalTrades
+?
+totalR /
+totalTrades
+:
+0;
+
+let assetStats = {};
+
+let modelStats = {};
+
+let mistakeStats = {};
+
+let sessionStats = {};
+
+let equity = 0;
+
+let peak = 0;
+
+let maxDrawdown = 0;
+
+filteredTrades.forEach(trade => {
+
+if(!assetStats[trade.asset]){
+assetStats[trade.asset] = 0;
+}
+
+assetStats[trade.asset] += trade.resultR;
+
+if(!modelStats[trade.model]){
+modelStats[trade.model] = 0;
+}
+
+modelStats[trade.model] += trade.resultR;
+
+if(!sessionStats[trade.session]){
+sessionStats[trade.session] = 0;
+}
+
+sessionStats[trade.session] += trade.resultR;
+
+if(trade.mistakes){
+
+trade.mistakes.forEach(mistake => {
+
+if(!mistakeStats[mistake]){
+mistakeStats[mistake] = 0;
+}
+
+mistakeStats[mistake]++;
+
+});
+
+}
+
+
+equity += trade.resultR;
+
+if(
+equity > peak
+){
+peak = equity;
+}
+
+let drawdown =
+peak - equity;
+
+if(
+drawdown >
+maxDrawdown
+){
+maxDrawdown =
+drawdown;
+}
+
+});
+
+let bestAsset = "-";
+let bestAssetR = -Infinity;
+
+let bestModel = "-";
+let bestModelR = -Infinity;
+
+let bestSession = "-";
+let bestSessionR = -Infinity;
+
+let worstSession = "-";
+let worstSessionR = Infinity;
+
+let topMistake = "-";
+let topMistakeCount = 0;
+
+
+let currentWinStreak = 0;
+let currentLossStreak = 0;
+
+let largestWinStreak = 0;
+let largestLossStreak = 0;
+
+filteredTrades.forEach(trade => {
+
+if(trade.result === "Win"){
+
+currentWinStreak++;
+
+currentLossStreak = 0;
+
+if(
+currentWinStreak >
+largestWinStreak
+){
+
+largestWinStreak =
+currentWinStreak;
+
+}
+
+}
+
+else if(
+trade.result === "Loss"
+){
+
+currentLossStreak++;
+
+currentWinStreak = 0;
+
+if(
+currentLossStreak >
+largestLossStreak
+){
+
+largestLossStreak =
+currentLossStreak;
+
+}
+
+}
+
+else{
+
+currentWinStreak = 0;
+currentLossStreak = 0;
+
+}
+
+});
+
+for(
+let model
+in modelStats
+){
+
+if(
+modelStats[model]
+>
+bestModelR
+){
+
+bestModelR =
+modelStats[model];
+
+bestModel =
+model;
+
+}
+
+}
+
+for(
+let session
+in sessionStats
+){
+
+if(
+sessionStats[session] >
+bestSessionR
+){
+
+bestSessionR =
+sessionStats[session];
+
+bestSession =
+session;
+
+}
+
+if(
+sessionStats[session] <
+worstSessionR
+){
+
+worstSessionR =
+sessionStats[session];
+
+worstSession =
+session;
+
+}
+
+}
+
+for(
+let asset
+in assetStats
+){
+
+if(
+assetStats[
+asset
+] >
+bestAssetR
+){
+
+bestAssetR =
+assetStats[
+asset
+];
+
+bestAsset =
+asset;
+
+}
+
+}
+
+document
+.getElementById(
+"totalTrades"
+)
+.textContent =
+totalTrades;
+
+document
+.getElementById(
+"winRate"
+)
+.textContent =
+winRate.toFixed(1)
++ "%";
+
+document
+.getElementById(
+"totalR"
+)
+.textContent =
+totalR.toFixed(1);
+
+document
+.getElementById(
+"averageR"
+)
+.textContent =
+averageR.toFixed(2);
+
+document
+.getElementById(
+"bestTrade"
+)
+.textContent =
+bestTrade.toFixed(1);
+
+document
+.getElementById(
+"worstTrade"
+)
+.textContent =
+worstTrade.toFixed(1);
+
+document
+.getElementById(
+"profitFactor"
+)
+.textContent =
+profitFactor.toFixed(2);
+
+document
+.getElementById(
+"expectancy"
+)
+.textContent =
+expectancy.toFixed(2);
+
+document
+.getElementById(
+"bestAsset"
+)
+.textContent =
+bestAsset;
+
+document
+.getElementById(
+"bestModel"
+)
+.textContent =
+bestModel;
+
+for(
+let mistake
+in mistakeStats
+){
+
+if(
+mistakeStats[mistake] >
+topMistakeCount
+){
+
+topMistakeCount =
+mistakeStats[mistake];
+
+topMistake =
+mistake;
+
+}
+
+}
+
+document
+.getElementById(
+"topMistake"
+)
+.textContent =
+topMistake;
+
+document
+.getElementById(
+"maxDrawdown"
+)
+.textContent =
+maxDrawdown.toFixed(1)
++ "R";
+
+document
+.getElementById(
+"totalWins"
+)
+.textContent =
+wins;
+
+document
+.getElementById(
+"totalLosses"
+)
+.textContent =
+losses;
+
+document
+.getElementById(
+"totalBE"
+)
+.textContent =
+breakevens;
+
+document
+.getElementById(
+"winLossRatio"
+)
+.textContent =
+winLossRatio.toFixed(2);
+
+document
+.getElementById(
+"winStreak"
+)
+.textContent =
+largestWinStreak;
+
+document
+.getElementById(
+"lossStreak"
+)
+.textContent =
+largestLossStreak;
+
+document
+.getElementById(
+"bestSession"
+)
+.textContent =
+bestSession;
+
+document
+.getElementById(
+"worstSession"
+)
+.textContent =
+worstSession;
+
+}
+
+
+function deleteTrade(index) {
+    
+    allTrades.splice(
+        allTrades.indexOf(trades[index]),
+        1
+    );
+    
+    localStorage.setItem(
+        "trades",
+        JSON.stringify(allTrades)
+    );
+    
+    trades =
+        allTrades.filter(
+            t => t.model === currentModel
+        );
+    
+    renderTrades();
+    updateStats();
+    drawChart();
+    
+}
+
+function editTrade(index){
+
+    let trade = trades[index];
+
+    document.getElementById(
+        "asset"
+    ).value = trade.asset;
+
+    document.getElementById(
+        "result"
+    ).value = trade.result;
+
+    document.getElementById(
+        "resultR"
+    ).value = trade.resultR;
+
+document.getElementById(
+"model"
+).value = trade.model;
+
+document.getElementById(
+"date"
+).value = trade.date;
+
+document.getElementById(
+"session"
+).value = trade.session;
+
+document.getElementById(
+"entryPrice"
+).value = trade.entryPrice;
+
+document.getElementById(
+"stopLoss"
+).value = trade.stopLoss;
+
+document.getElementById(
+"takeProfit"
+).value = trade.takeProfit;
+
+document.getElementById(
+"risk"
+).value = trade.risk;
+
+document.getElementById(
+"lotSize"
+).value = trade.lotSize;
+
+document.getElementById(
+"emotion"
+).value = trade.emotion;
+
+
+document.getElementById(
+"notes"
+).value = trade.notes;
+
+document
+.querySelectorAll(
+'#mistakes input'
+)
+.forEach(box => {
+
+box.checked = false;
+
+if(
+trade.mistakes &&
+trade.mistakes.includes(
+box.value
+)
+){
+box.checked = true;
+}
+
+});
+
+    editIndex = index;
+
+    toggleForm();
+
+}
+
+    renderTrades();
+
+    updateStats();
+
+function viewTrade(index){
+
+    let trade = trades[index];
+
+    document.getElementById(
+        "tradeDetails"
+    ).innerHTML = `
+
+    <p><b>Asset:</b> ${trade.asset}</p>
+    <p><b>Model:</b> ${trade.model}</p>
+    <p><b>Session:</b> ${trade.session}</p>
+    <p><b>Result:</b> ${trade.result}</p>
+    <p><b>R:</b> ${trade.resultR}</p>
+    <p><b>Date:</b> ${trade.date}</p>
+    <p><b>Entry:</b> ${trade.entryPrice}</p>
+    <p><b>Stop Loss:</b> ${trade.stopLoss}</p>
+    <p><b>Take Profit:</b> ${trade.takeProfit}</p>
+    <p><b>Risk:</b> ${trade.risk}%</p>
+    <p><b>Lot Size:</b> ${trade.lotSize}</p>
+    <p><b>Emotion:</b> ${trade.emotion}</p>
+<p><b>Session:</b> ${trade.session}</p>
+<p><b>Notes:</b> ${trade.notes}</p>
+
+<p><b>Mistakes:</b>
+${trade.mistakes}
+</p>
+
+${trade.screenshot
+?
+`
+<p><b>Screenshot:</b></p>
+
+<img
+src="${trade.screenshot}"
+style="
+width:100%;
+margin-top:10px;
+border-radius:10px;
+"
+>
+`
+:
+""
+}
+
+    `;
+
+    document.getElementById(
+        "viewModal"
+    ).style.display = "block";
+
+}
+
+function closeView(){
+
+    document.getElementById(
+        "viewModal"
+    ).style.display = "none";
+
+}
+
+function drawChart(){
+
+    const ctx =
+    document.getElementById(
+        "equityChart"
+    );
+
+const selectedAsset =
+document.getElementById(
+"assetFilter"
+).value;
+
+const selectedModel =
+document.getElementById(
+"modelFilter"
+).value;
+
+const filteredTrades =
+trades.filter(trade => {
+
+if(
+selectedAsset !== "All" &&
+trade.asset !== selectedAsset
+){
+return false;
+}
+
+if(
+selectedModel !== "All" &&
+trade.model !== selectedModel
+){
+return false;
+}
+
+return true;
+
+});
+
+let sortedTrades =
+[...filteredTrades]
+.sort(
+(a,b)=>
+new Date(a.date) -
+new Date(b.date)
+);
+
+let dates = [];
+let equity = [];
+let total = 0;
+
+sortedTrades.forEach(trade => {
+
+    total += trade.resultR;
+
+    dates.push(
+        new Date(trade.date)
+        .toLocaleDateString()
+    );
+
+    equity.push(total);
+
+});
+
+if(chart){
+
+    chart.destroy();
+
+}
+
+chart = new Chart(ctx, {
+
+type:"line",
+
+data:{
+labels:dates,
+
+datasets:[{
+label:"Equity Curve",
+data:equity,
+tension:0.4,
+fill:true,
+borderWidth:3,
+pointRadius:4,
+pointHoverRadius:7
+}]
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{
+display:false
+}
+},
+
+scales:{
+
+x:{
+grid:{
+display:false
+}
+},
+
+y:{
+beginAtZero:false
+}
+
+}
+
+}
+
+});
+}
+
+function renderMistakes(){
+
+const container =
+document.getElementById(
+"mistakes"
+);
+
+container.innerHTML = "";
+
+mistakesList.forEach(
+mistake => {
+
+container.innerHTML += `
+<label>
+<input
+type="checkbox"
+value="${mistake}"
+>
+${mistake}
+</label><br>
+`;
+
+});
+
+}
+
+function toggleMistakes(){
+
+const box =
+document.getElementById(
+"mistakes"
+);
+
+if(
+box.style.display ===
+"none"
+){
+
+box.style.display =
+"block";
+
+}else{
+
+box.style.display =
+"none";
+
+}
+
+}
+
+function addMistake(){
+
+const input =
+document.getElementById(
+"newMistake"
+);
+
+const value =
+input.value.trim();
+
+if(!value) return;
+
+mistakesList.push(value);
+
+localStorage.setItem(
+"mistakesList",
+JSON.stringify(
+mistakesList
+)
+);
+
+renderMistakes();
+
+input.value = "";
+
+}
+
+function renderModels(){
+
+const select =
+document.getElementById(
+"model"
+);
+
+const filter =
+document.getElementById(
+"modelFilter"
+);
+
+select.innerHTML = "";
+
+if(filter){
+filter.innerHTML =
+'<option value="All">All Models</option>';
+}
+
+modelsList.forEach(
+model => {
+
+select.innerHTML += `
+<option value="${model}">
+${model}
+</option>
+`;
+
+if(filter){
+
+filter.innerHTML += `
+<option value="${model}">
+${model}
+</option>
+`;
+
+}
+
+});
+
+}
+
+const filter =
+document.getElementById(
+"modelFilter"
+);
+
+if(filter){
+
+filter.innerHTML =
+'<option value="All">All Models</option>';
+
+modelsList.forEach(
+model => {
+
+filter.innerHTML += `
+<option value="${model}">
+${model}
+</option>
+`;
+
+});
+
+}
+
+
+function drawSessionChart() {
+    
+    const selectedAsset =
+        document.getElementById(
+            "assetFilter"
+        ).value;
+    
+    const selectedModel =
+        document.getElementById(
+            "modelFilter"
+        ).value;
+    
+    const filteredTrades =
+        trades.filter(trade => {
+            
+            if (
+                selectedAsset !== "All" &&
+                trade.asset !== selectedAsset
+            ) {
+                return false;
+            }
+            
+            if (
+                selectedModel !== "All" &&
+                trade.model !== selectedModel
+            ) {
+                return false;
+            }
+            
+            return true;
+            
+        });
+    
+    let sessions = {
+        "Asia": [],
+        "London": [],
+        "New York AM": [],
+        "New York PM": []
+    };
+    
+    filteredTrades.forEach(trade => {
+
+    if(trade.session){
+        sessions[trade.session].push(trade);
+    }
+
+});
+
+const ctx =
+document.getElementById(
+    "sessionChart"
+);
+
+if(sessionChart){
+    sessionChart.destroy();
+}
+
+sessionChart =
+new Chart(ctx,{
+
+type:"doughnut",
+
+data:{
+labels:Object.keys(sessions),
+
+datasets:[{
+data:Object.values(sessions)
+.map(session => session.length)
+}]
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false
+}
+
+});
+
+let statsHTML = "";
+
+for(let sessionName in sessions){
+
+    const sessionTrades =
+    sessions[sessionName];
+
+    const totalTrades =
+    sessionTrades.length;
+
+    const wins =
+    sessionTrades.filter(
+        trade =>
+        trade.result === "Win"
+    ).length;
+
+    const totalR =
+    sessionTrades.reduce(
+        (sum,trade)=>
+        sum + trade.resultR,
+        0
+    );
+
+    const winRate =
+    totalTrades
+    ?
+    ((wins / totalTrades) * 100)
+    .toFixed(1)
+    :
+    0;
+
+statsHTML += `
+<div class="stat-card">
+    
+    <h3>${sessionName}</h3>
+    
+    <p>
+        <b>Trades:</b>
+        ${totalTrades}
+    </p>
+    
+    <p>
+        <b>Total R:</b>
+        ${totalR.toFixed(1)}
+    </p>
+    
+    <p>
+        <b>Win Rate:</b>
+        ${winRate}%
+    </p>
+    
+</div>
+`;
+
+}
+
+document.getElementById(
+    "sessionStats"
+).innerHTML =
+statsHTML;
+
+}
+
+function renderModelsCards(){}
+
+renderMistakes();
+renderModels();
+renderTrades();
+updateStats();
+drawChart();
+drawSessionChart();
+
+</script>
+</body>
+</html>
